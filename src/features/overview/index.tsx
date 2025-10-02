@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { format } from 'date-fns'
-import { Calendar, Users, Crown, TrendingUp, Eye, UserPlus, UserCheck } from 'lucide-react'
+import { format, subDays, addDays } from 'date-fns'
+import { Calendar, Users, Crown, TrendingUp, Eye, UserPlus, UserCheck, ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -53,6 +53,22 @@ export function Overview() {
     }
   }
 
+  const handlePreviousDay = () => {
+    const newDate = subDays(selectedDate, 1)
+    const minDate = subDays(new Date(), 100) // 100 days before today
+    if (newDate >= minDate) {
+      setSelectedDate(newDate)
+    }
+  }
+
+  const handleNextDay = () => {
+    const newDate = addDays(selectedDate, 1)
+    const maxDate = new Date() // today
+    if (newDate <= maxDate) {
+      setSelectedDate(newDate)
+    }
+  }
+
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -79,6 +95,15 @@ export function Overview() {
           </div>
           
           <div className='flex items-center space-x-3'>
+            <Button
+              variant='outline'
+              size='icon'
+              onClick={handlePreviousDay}
+              disabled={subDays(selectedDate, 1) < subDays(new Date(), 100)}
+            >
+              <ChevronLeft className='h-4 w-4' />
+            </Button>
+            
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -97,10 +122,20 @@ export function Overview() {
                   mode='single'
                   selected={selectedDate}
                   onSelect={handleDateSelect}
+                  defaultMonth={selectedDate}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
+            
+            <Button
+              variant='outline'
+              size='icon'
+              onClick={handleNextDay}
+              disabled={addDays(selectedDate, 1) > new Date()}
+            >
+              <ChevronRight className='h-4 w-4' />
+            </Button>
             
             <Button
               onClick={() => refetch()}
