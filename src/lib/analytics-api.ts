@@ -51,6 +51,32 @@ export interface SingleDatePremiumUsersResponse {
   }
 }
 
+export interface User {
+  userId: string
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  email?: string | null
+  phone?: string | null
+  registrationDate: string
+}
+
+export interface NewUsersInRangeResponse {
+  message?: string
+  data: {
+    count: number
+    total: number
+    startDate: string
+    endDate: string
+    users: User[]
+    pagination: {
+      limit: number
+      skip: number
+      hasMore: boolean
+    }
+  }
+}
+
 export interface Order {
   _id?: string
   orderId: string
@@ -120,6 +146,13 @@ export interface PremiumUsersParams {
   skip?: number
 }
 
+export interface NewUsersParams {
+  startDate: string
+  endDate: string
+  limit?: number
+  skip?: number
+}
+
 // Analytics API functions
 export const analyticsApi = {
   // Get analytics overview for a specific date
@@ -165,6 +198,21 @@ export const analyticsApi = {
 
     const response = await api.get<OrdersResponse>(
       `/v1/analytics/orders?${searchParams.toString()}`
+    )
+    return response.data
+  },
+
+  // Get new users in date range
+  getNewUsersInRange: async (params: NewUsersParams): Promise<NewUsersInRangeResponse> => {
+    const searchParams = new URLSearchParams()
+    
+    searchParams.set('startDate', params.startDate)
+    searchParams.set('endDate', params.endDate)
+    if (params.limit) searchParams.set('limit', params.limit.toString())
+    if (params.skip) searchParams.set('skip', params.skip.toString())
+
+    const response = await api.get<NewUsersInRangeResponse>(
+      `/v1/analytics/new-users-in-range?${searchParams.toString()}`
     )
     return response.data
   },

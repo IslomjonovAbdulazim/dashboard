@@ -39,6 +39,11 @@ export const getSidebarData = (t: Translations): SidebarData => ({
           icon: CreditCard,
         },
         {
+          title: t.nav.users,
+          url: '/users',
+          icon: Users,
+        },
+        {
           title: t.nav.learningCenters,
           url: '/learning-centers',
           icon: Building2,
@@ -82,6 +87,7 @@ export const sidebarData: SidebarData = getSidebarData({
     general: 'General',
     overview: 'Overview',
     payments: 'Payments',
+    users: 'Users',
     learningCenters: 'Learning Centers',
     contentManagement: 'Content Management',
     courses: 'Courses',
