@@ -12,7 +12,9 @@ import {
   AlertCircle,
   DollarSign,
   Phone,
-  Mail
+  Mail,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import {
   Card,
@@ -65,6 +67,8 @@ export function Payments() {
   })
   const [orderStatus, setOrderStatus] = useState<string>('all')
   const [datePickerOpen, setDatePickerOpen] = useState(false)
+  const [premiumUsersPage, setPremiumUsersPage] = useState(0)
+  const [premiumUsersLimit] = useState(10)
 
   const formattedStartDate = format(dateRange.from, 'yyyy-MM-dd')
   const formattedEndDate = format(dateRange.to, 'yyyy-MM-dd')
@@ -75,8 +79,13 @@ export function Payments() {
     isLoading: isPremiumUsersLoading,
     refetch: refetchPremiumUsers,
   } = useQuery({
-    queryKey: ['new-premium-users', formattedStartDate, formattedEndDate],
-    queryFn: () => analyticsApi.getNewPremiumUsers(formattedStartDate, formattedEndDate),
+    queryKey: ['new-premium-users', formattedStartDate, formattedEndDate, premiumUsersPage, premiumUsersLimit],
+    queryFn: () => analyticsApi.getNewPremiumUsers({
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      limit: premiumUsersLimit,
+      skip: premiumUsersPage * premiumUsersLimit,
+    }),
   })
 
   // Fetch orders data
@@ -158,6 +167,21 @@ export function Payments() {
     refetchOrders()
   }
 
+  const handleDateRangeChange = (range: DateRange) => {
+    setDateRange(range)
+    setPremiumUsersPage(0) // Reset to first page when date range changes
+  }
+
+  const handlePreviousPage = () => {
+    setPremiumUsersPage(prev => Math.max(0, prev - 1))
+  }
+
+  const handleNextPage = () => {
+    if (premiumUsersData?.data.pagination?.hasMore) {
+      setPremiumUsersPage(prev => prev + 1)
+    }
+  }
+
   const getUserDisplayName = (user: PremiumUser) => {
     if (user.firstName) return user.firstName
     if (user.email) return user.email.split('@')[0]
@@ -222,7 +246,7 @@ export function Payments() {
                   selected={dateRange}
                   onSelect={(range) => {
                     if (range?.from && range?.to) {
-                      setDateRange({ from: range.from, to: range.to })
+                      handleDateRangeChange({ from: range.from, to: range.to })
                       setDatePickerOpen(false)
                     }
                   }}
@@ -306,11 +330,18 @@ export function Payments() {
 
         {/* Premium Users Timeline */}
         <Card className='mb-6'>
-          <CardHeader>
+          <CardHeader className='flex flex-row items-center justify-between'>
             <CardTitle className='flex items-center gap-2'>
               <Users className='h-5 w-5' />
               New Premium Users Timeline
             </CardTitle>
+            {premiumUsersData?.data.pagination && (
+              <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                <span>
+                  Showing {premiumUsersPage * premiumUsersLimit + 1}-{Math.min((premiumUsersPage + 1) * premiumUsersLimit, premiumUsersData.data.pagination.total)} of {premiumUsersData.data.pagination.total} days
+                </span>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             {isPremiumUsersLoading ? (
@@ -375,6 +406,35 @@ export function Payments() {
                     <p>No new premium users in the selected date range</p>
                   </div>
                 )}
+              </div>
+            )}
+            
+            {/* Pagination Controls */}
+            {premiumUsersData?.data.pagination && premiumUsersData.data.pagination.total > premiumUsersLimit && (
+              <div className='flex items-center justify-between pt-4 border-t'>
+                <div className='text-sm text-muted-foreground'>
+                  Page {premiumUsersPage + 1} of {Math.ceil(premiumUsersData.data.pagination.total / premiumUsersLimit)}
+                </div>
+                <div className='flex items-center gap-2'>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={handlePreviousPage}
+                    disabled={premiumUsersPage === 0 || isPremiumUsersLoading}
+                  >
+                    <ChevronLeft className='h-4 w-4 mr-1' />
+                    Previous
+                  </Button>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={handleNextPage}
+                    disabled={!premiumUsersData.data.pagination.hasMore || isPremiumUsersLoading}
+                  >
+                    Next
+                    <ChevronRight className='h-4 w-4 ml-1' />
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>

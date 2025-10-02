@@ -30,6 +30,12 @@ export interface NewPremiumUsersResponse {
       count: number
       users: PremiumUser[]
     }>
+    pagination?: {
+      total: number
+      limit: number
+      skip: number
+      hasMore: boolean
+    }
   }
 }
 
@@ -86,6 +92,13 @@ export interface OrdersParams {
   skip?: number
 }
 
+export interface PremiumUsersParams {
+  startDate: string
+  endDate: string
+  limit?: number
+  skip?: number
+}
+
 // Analytics API functions
 export const analyticsApi = {
   // Get analytics overview for a specific date
@@ -97,9 +110,16 @@ export const analyticsApi = {
   },
 
   // Get new premium users in date range
-  getNewPremiumUsers: async (startDate: string, endDate: string): Promise<NewPremiumUsersResponse> => {
+  getNewPremiumUsers: async (params: PremiumUsersParams): Promise<NewPremiumUsersResponse> => {
+    const searchParams = new URLSearchParams()
+    
+    searchParams.set('startDate', params.startDate)
+    searchParams.set('endDate', params.endDate)
+    if (params.limit) searchParams.set('limit', params.limit.toString())
+    if (params.skip) searchParams.set('skip', params.skip.toString())
+
     const response = await api.get<NewPremiumUsersResponse>(
-      `/v1/analytics/new-premium-users-range?startDate=${startDate}&endDate=${endDate}`
+      `/v1/analytics/new-premium-users-range?${searchParams.toString()}`
     )
     return response.data
   },
