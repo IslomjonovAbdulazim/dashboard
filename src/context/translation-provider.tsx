@@ -16,7 +16,7 @@ interface TranslationProviderProps {
 
 export function TranslationProvider({ 
   children, 
-  defaultLanguage = 'uz' // Default to Uzbek as requested
+  defaultLanguage = 'en' // Default to English
 }: TranslationProviderProps) {
   const [language, setLanguage] = useState<Language>(() => {
     // Check if there's a saved language preference

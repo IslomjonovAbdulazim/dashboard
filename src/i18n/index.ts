@@ -10,8 +10,8 @@ export const TranslationContext = createContext<{
   language: Language;
   setLanguage: (lang: Language) => void;
 }>({
-  t: uzbekTranslations, // Default to Uzbek as requested
-  language: 'uz',
+  t: englishTranslations, // Default to English
+  language: 'en',
   setLanguage: () => {},
 });
 
