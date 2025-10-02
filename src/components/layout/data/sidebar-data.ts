@@ -77,7 +77,7 @@ export const getSidebarData = (t: Translations): SidebarData => ({
 // Keep the old export for backward compatibility, but it will use English by default
 export const sidebarData: SidebarData = getSidebarData({
   nav: {
-    teamName: 'Zehnly Admin',
+    teamName: 'Zehnly Stats',
     planName: 'Super Admin',
     general: 'General',
     overview: 'Overview',

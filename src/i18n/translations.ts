@@ -576,7 +576,7 @@ export const englishTranslations: Translations = {
   },
   
   nav: {
-    teamName: "Edu Tizim Admin",
+    teamName: "Zehnly Stats",
     planName: "Super Admin",
     general: "General",
     overview: "Overview",

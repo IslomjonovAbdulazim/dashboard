@@ -10,7 +10,6 @@ import {
 // import { AppTitle } from './app-title'
 import { getSidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
-import { NavUser } from './nav-user'
 import { TeamSwitcher } from './team-switcher'
 
 export function AppSidebar() {
@@ -33,7 +32,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        {/* User widget removed as requested */}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
