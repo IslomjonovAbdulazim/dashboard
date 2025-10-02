@@ -76,7 +76,7 @@ export interface Order {
 }
 
 export interface OrdersResponse {
-  message: string
+  message?: string
   data: {
     orders: Order[]
     total: number
@@ -164,7 +164,7 @@ export const analyticsApi = {
     if (params.skip) searchParams.set('skip', params.skip.toString())
 
     const response = await api.get<OrdersResponse>(
-      `/v1/analytics/orders/comprehensive?${searchParams.toString()}`
+      `/v1/analytics/orders?${searchParams.toString()}`
     )
     return response.data
   },
