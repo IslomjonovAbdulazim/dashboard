@@ -62,10 +62,10 @@ interface DateRange {
 }
 
 export function Payments() {
-  const [dateRange, setDateRange] = useState<DateRange>({
+  const [dateRange, setDateRange] = useState<DateRange>(() => ({
     from: startOfMonth(new Date()),
     to: endOfMonth(new Date())
-  })
+  }))
   const [orderStatus, setOrderStatus] = useState<string>('all')
   const [revenueCat, setRevenueCat] = useState<boolean>(false)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
