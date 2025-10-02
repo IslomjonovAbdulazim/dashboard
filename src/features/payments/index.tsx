@@ -151,19 +151,19 @@ export function Payments() {
   }
 
   // Calculate total premium users from the data
-  const totalNewPremiumUsers = premiumUsersData?.data.results.reduce(
+  const totalNewPremiumUsers = premiumUsersData?.data.results?.reduce(
     (sum, day) => sum + day.count, 0
   ) || 0
 
   // Calculate daily average
-  const daysInRange = premiumUsersData?.data.results.length || 1
+  const daysInRange = premiumUsersData?.data.results?.length || 1
   const dailyAverage = totalNewPremiumUsers / daysInRange
 
   // Find peak day
-  const peakDay = premiumUsersData?.data.results.reduce(
+  const peakDay = premiumUsersData?.data.results?.reduce(
     (max, day) => day.count > max.count ? day : max,
     { date: '', count: 0 }
-  )
+  ) || { date: '', count: 0 }
 
   const handleRefresh = () => {
     refetchPremiumUsers()
