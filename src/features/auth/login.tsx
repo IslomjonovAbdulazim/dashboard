@@ -15,7 +15,6 @@ import { PasswordInput } from '@/components/password-input'
 type LoginFormData = {
   email: string
   password: string
-  captchaToken: string
 }
 
 export function Login() {
@@ -26,7 +25,6 @@ export function Login() {
   const loginSchema = z.object({
     email: z.string().email('Please enter a valid email address'),
     password: z.string().min(1, 'Password is required'),
-    captchaToken: z.string().min(1, 'Captcha token is required'),
   })
 
   const {
@@ -35,9 +33,6 @@ export function Login() {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      captchaToken: 'dummy_token_for_testing', // Default captcha token for testing
-    },
   })
 
   const getErrorMessage = (errorCode: string) => {
@@ -60,7 +55,13 @@ export function Login() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
-      await authApi.login(data)
+      // Always send the dummy captcha token
+      const loginData = {
+        ...data,
+        captchaToken: 'dummy_token_for_testing'
+      }
+      
+      await authApi.login(loginData)
       
       // Since tokens are in HTTP-only cookies, we just need to set authentication state
       // For now, we'll create a mock user object - in real app, you might fetch user info
@@ -118,20 +119,6 @@ export function Login() {
               />
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="captchaToken">Captcha Token</Label>
-              <Input
-                id="captchaToken"
-                type="text"
-                placeholder="Captcha token (dummy_token_for_testing)"
-                {...register('captchaToken')}
-                disabled={isLoading}
-              />
-              {errors.captchaToken && (
-                <p className="text-sm text-destructive">{errors.captchaToken.message}</p>
               )}
             </div>
 
