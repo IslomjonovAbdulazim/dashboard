@@ -6,6 +6,7 @@ import {
   Type,
   Users,
   BarChart3,
+  CreditCard,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 import { type Translations } from '@/i18n/translations'
@@ -31,6 +32,11 @@ export const getSidebarData = (t: Translations): SidebarData => ({
           title: t.nav.overview,
           url: '/overview',
           icon: BarChart3,
+        },
+        {
+          title: t.nav.payments,
+          url: '/payments',
+          icon: CreditCard,
         },
         {
           title: t.nav.learningCenters,
@@ -75,6 +81,7 @@ export const sidebarData: SidebarData = getSidebarData({
     planName: 'Super Admin',
     general: 'General',
     overview: 'Overview',
+    payments: 'Payments',
     learningCenters: 'Learning Centers',
     contentManagement: 'Content Management',
     courses: 'Courses',

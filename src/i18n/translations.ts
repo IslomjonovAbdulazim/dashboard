@@ -23,6 +23,7 @@ export interface Translations {
     planName: string;
     general: string;
     overview: string;
+    payments: string;
     learningCenters: string;
     contentManagement: string;
     courses: string;
@@ -304,6 +305,7 @@ export const uzbekTranslations: Translations = {
     planName: "Super Admin",
     general: "Umumiy",
     overview: "Umumiy Ko'rinish",
+    payments: "To'lovlar",
     learningCenters: "Ta'lim Markazlari",
     contentManagement: "Kontent Boshqaruvi",
     courses: "Kurslar",
@@ -578,6 +580,7 @@ export const englishTranslations: Translations = {
     planName: "Super Admin",
     general: "General",
     overview: "Overview",
+    payments: "Payments",
     learningCenters: "Learning Centers",
     contentManagement: "Content Management",
     courses: "Courses",
