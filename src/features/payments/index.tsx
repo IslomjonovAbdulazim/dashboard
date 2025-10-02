@@ -36,6 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import {
   Table,
   TableBody,
@@ -65,6 +67,7 @@ export function Payments() {
     to: endOfMonth(new Date())
   })
   const [orderStatus, setOrderStatus] = useState<string>('all')
+  const [revenueCat, setRevenueCat] = useState<boolean>(false)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [ordersPage, setOrdersPage] = useState(0)
   const [ordersLimit] = useState(10)
@@ -79,9 +82,10 @@ export function Payments() {
     isLoading: isOrdersLoading,
     refetch: refetchOrders,
   } = useQuery({
-    queryKey: ['orders', orderStatus, formattedStartDate, formattedEndDate, ordersPage, ordersLimit],
+    queryKey: ['orders', orderStatus, revenueCat, formattedStartDate, formattedEndDate, ordersPage, ordersLimit],
     queryFn: () => analyticsApi.getOrders({
       status: orderStatus === 'all' ? undefined : orderStatus,
+      revenueCat: revenueCat,
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       limit: ordersLimit,
@@ -163,6 +167,11 @@ export function Payments() {
   const handleOrderStatusChange = (status: string) => {
     setOrderStatus(status)
     setOrdersPage(0) // Reset pagination when status changes
+  }
+
+  const handleRevenueCatChange = (checked: boolean) => {
+    setRevenueCat(checked)
+    setOrdersPage(0) // Reset pagination when RevenueCat filter changes
   }
 
   return (
@@ -293,19 +302,31 @@ export function Payments() {
                 </div>
               )}
             </div>
-            <Select value={orderStatus} onValueChange={handleOrderStatusChange}>
-              <SelectTrigger className='w-[150px]'>
-                <SelectValue placeholder='Filter by status' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Orders</SelectItem>
-                <SelectItem value='PENDING'>Pending</SelectItem>
-                <SelectItem value='PAID'>Paid</SelectItem>
-                <SelectItem value='CANCELED'>Canceled</SelectItem>
-                <SelectItem value='TIMEOUT'>Timeout</SelectItem>
-                <SelectItem value='EXPIRED'>Expired</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className='flex items-center gap-3'>
+              <div className='flex items-center space-x-2'>
+                <Switch
+                  id='revenue-cat'
+                  checked={revenueCat}
+                  onCheckedChange={handleRevenueCatChange}
+                />
+                <Label htmlFor='revenue-cat' className='text-sm'>
+                  RevenueCat
+                </Label>
+              </div>
+              <Select value={orderStatus} onValueChange={handleOrderStatusChange}>
+                <SelectTrigger className='w-[150px]'>
+                  <SelectValue placeholder='Filter by status' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>All Orders</SelectItem>
+                  <SelectItem value='PENDING'>Pending</SelectItem>
+                  <SelectItem value='PAID'>Paid</SelectItem>
+                  <SelectItem value='CANCELED'>Canceled</SelectItem>
+                  <SelectItem value='TIMEOUT'>Timeout</SelectItem>
+                  <SelectItem value='EXPIRED'>Expired</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardHeader>
           <CardContent>
             {isOrdersLoading ? (

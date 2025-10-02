@@ -137,6 +137,7 @@ export interface OrdersParams {
   endDate?: string
   limit?: number
   skip?: number
+  revenueCat?: boolean
 }
 
 export interface PremiumUsersParams {
@@ -195,6 +196,7 @@ export const analyticsApi = {
     if (params.endDate) searchParams.set('endDate', params.endDate)
     if (params.limit) searchParams.set('limit', params.limit.toString())
     if (params.skip) searchParams.set('skip', params.skip.toString())
+    if (params.revenueCat !== undefined) searchParams.set('revenueCat', params.revenueCat.toString())
 
     const response = await api.get<OrdersResponse>(
       `/v1/analytics/orders?${searchParams.toString()}`
