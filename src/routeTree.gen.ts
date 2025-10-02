@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedUserManagementRouteImport } from './routes/_authenticated/user-management'
+import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
 import { Route as AuthenticatedLearningCentersRouteImport } from './routes/_authenticated/learning-centers'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedContentWordsRouteImport } from './routes/_authenticated/content/words'
@@ -39,6 +40,11 @@ const AuthenticatedUserManagementRoute =
     path: '/user-management',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedOverviewRoute = AuthenticatedOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLearningCentersRoute =
   AuthenticatedLearningCentersRouteImport.update({
     id: '/learning-centers',
@@ -73,6 +79,7 @@ const AuthenticatedContentCoursesRoute =
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/learning-centers': typeof AuthenticatedLearningCentersRoute
+  '/overview': typeof AuthenticatedOverviewRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
   '/': typeof AuthenticatedIndexRoute
   '/content/courses': typeof AuthenticatedContentCoursesRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/learning-centers': typeof AuthenticatedLearningCentersRoute
+  '/overview': typeof AuthenticatedOverviewRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
   '/': typeof AuthenticatedIndexRoute
   '/content/courses': typeof AuthenticatedContentCoursesRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/learning-centers': typeof AuthenticatedLearningCentersRoute
+  '/_authenticated/overview': typeof AuthenticatedOverviewRoute
   '/_authenticated/user-management': typeof AuthenticatedUserManagementRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/content/courses': typeof AuthenticatedContentCoursesRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/login'
     | '/learning-centers'
+    | '/overview'
     | '/user-management'
     | '/'
     | '/content/courses'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/learning-centers'
+    | '/overview'
     | '/user-management'
     | '/'
     | '/content/courses'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/learning-centers'
+    | '/_authenticated/overview'
     | '/_authenticated/user-management'
     | '/_authenticated/'
     | '/_authenticated/content/courses'
@@ -171,6 +183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUserManagementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/overview': {
+      id: '/_authenticated/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof AuthenticatedOverviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/learning-centers': {
       id: '/_authenticated/learning-centers'
       path: '/learning-centers'
@@ -211,6 +230,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedLearningCentersRoute: typeof AuthenticatedLearningCentersRoute
+  AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
   AuthenticatedUserManagementRoute: typeof AuthenticatedUserManagementRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedContentCoursesRoute: typeof AuthenticatedContentCoursesRoute
@@ -221,6 +241,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLearningCentersRoute: AuthenticatedLearningCentersRoute,
+  AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
   AuthenticatedUserManagementRoute: AuthenticatedUserManagementRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedContentCoursesRoute: AuthenticatedContentCoursesRoute,
