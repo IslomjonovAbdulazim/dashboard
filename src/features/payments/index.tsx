@@ -386,8 +386,8 @@ export function Payments() {
             ) : (
               <div className='space-y-3 max-h-96 overflow-y-auto'>
                 {premiumUsersData?.data.results
-                  .filter(day => day.count > 0)
-                  .map((day) => (
+                  ?.filter(day => day.count > 0)
+                  ?.map((day) => (
                     <div key={day.date} className='border-l-2 border-green-500 pl-4 py-2'>
                       <div className='flex items-center gap-3 mb-2'>
                         <Badge variant='outline' className='text-xs'>
@@ -429,7 +429,7 @@ export function Payments() {
                       )}
                     </div>
                   ))}
-                {premiumUsersData?.data.results.filter(day => day.count > 0).length === 0 && (
+                {premiumUsersData?.data.results?.filter(day => day.count > 0)?.length === 0 && (
                   <div className='text-center py-8 text-muted-foreground'>
                     <Users className='h-12 w-12 mx-auto mb-2 opacity-50' />
                     <p>No new premium users in the selected date range</p>
