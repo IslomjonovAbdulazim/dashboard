@@ -212,7 +212,7 @@ export const analyticsApi = {
     if (params.skip) searchParams.set('skip', params.skip.toString())
 
     const response = await api.get<NewUsersInRangeResponse>(
-      `/v1/analytics/new-users-in-range?${searchParams.toString()}`
+      `/v1/analytics/users-in-range?${searchParams.toString()}`
     )
     return response.data
   },
