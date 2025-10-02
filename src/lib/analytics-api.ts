@@ -9,6 +9,7 @@ export interface AnalyticsOverviewResponse {
     mau: number
     premiumUsers: number
     dailyNewPremiumUsers: number
+    dailyNewUsers: number
     date: string
   }
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { Calendar, Users, Crown, TrendingUp, Eye, UserPlus } from 'lucide-react'
+import { Calendar, Users, Crown, TrendingUp, Eye, UserPlus, UserCheck } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -114,117 +114,158 @@ export function Overview() {
 
         {/* Analytics Cards */}
         {analytics && (
-          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-            {/* Daily Active Users */}
-            <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Daily Active Users</CardTitle>
-                <Eye className='h-4 w-4 text-muted-foreground' />
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>{formatNumber(analytics.data.dau)}</div>
-                <p className='text-xs text-muted-foreground'>
-                  Active users on {format(selectedDate, 'MMM dd, yyyy')}
-                </p>
-              </CardContent>
-            </Card>
+          <div className='space-y-6'>
+            {/* Main Metrics Row */}
+            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+              {/* Daily Active Users */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>Daily Active Users</CardTitle>
+                  <Eye className='h-4 w-4 text-muted-foreground' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>{formatNumber(analytics.data.dau)}</div>
+                  <p className='text-xs text-muted-foreground'>
+                    Active users on {format(selectedDate, 'MMM dd, yyyy')}
+                  </p>
+                </CardContent>
+              </Card>
 
-            {/* Weekly Active Users */}
-            <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Weekly Active Users</CardTitle>
-                <TrendingUp className='h-4 w-4 text-muted-foreground' />
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>{formatNumber(analytics.data.wau)}</div>
-                <p className='text-xs text-muted-foreground'>
-                  Active users in the past 7 days
-                </p>
-              </CardContent>
-            </Card>
+              {/* Weekly Active Users */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>Weekly Active Users</CardTitle>
+                  <TrendingUp className='h-4 w-4 text-muted-foreground' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>{formatNumber(analytics.data.wau)}</div>
+                  <p className='text-xs text-muted-foreground'>
+                    Active users in the past 7 days
+                  </p>
+                </CardContent>
+              </Card>
 
-            {/* Monthly Active Users */}
-            <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Monthly Active Users</CardTitle>
-                <Users className='h-4 w-4 text-muted-foreground' />
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>{formatNumber(analytics.data.mau)}</div>
-                <p className='text-xs text-muted-foreground'>
-                  Active users in the past 30 days
-                </p>
-              </CardContent>
-            </Card>
+              {/* Monthly Active Users */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>Monthly Active Users</CardTitle>
+                  <Users className='h-4 w-4 text-muted-foreground' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>{formatNumber(analytics.data.mau)}</div>
+                  <p className='text-xs text-muted-foreground'>
+                    Active users in the past 30 days
+                  </p>
+                </CardContent>
+              </Card>
 
-            {/* Premium Users */}
-            <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Total Premium Users</CardTitle>
-                <Crown className='h-4 w-4 text-yellow-500' />
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold text-yellow-600 dark:text-yellow-400'>
-                  {formatNumber(analytics.data.premiumUsers)}
-                </div>
-                <p className='text-xs text-muted-foreground'>
-                  Premium subscribers as of {format(selectedDate, 'MMM dd, yyyy')}
-                </p>
-              </CardContent>
-            </Card>
+              {/* Premium Users */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>Total Premium Users</CardTitle>
+                  <Crown className='h-4 w-4 text-yellow-500' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold text-yellow-600 dark:text-yellow-400'>
+                    {formatNumber(analytics.data.premiumUsers)}
+                  </div>
+                  <p className='text-xs text-muted-foreground'>
+                    Premium subscribers as of {format(selectedDate, 'MMM dd, yyyy')}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
 
-            {/* Daily New Premium Users */}
-            <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>New Premium Users</CardTitle>
-                <UserPlus className='h-4 w-4 text-green-500' />
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold text-green-600 dark:text-green-400'>
-                  {formatNumber(analytics.data.dailyNewPremiumUsers)}
-                </div>
-                <p className='text-xs text-muted-foreground'>
-                  New premium subscriptions on {format(selectedDate, 'MMM dd, yyyy')}
-                </p>
-              </CardContent>
-            </Card>
+            {/* New Users Row */}
+            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+              {/* Daily New Premium Users */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>New Premium Users</CardTitle>
+                  <UserPlus className='h-4 w-4 text-green-500' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold text-green-600 dark:text-green-400'>
+                    {formatNumber(analytics.data.dailyNewPremiumUsers)}
+                  </div>
+                  <p className='text-xs text-muted-foreground'>
+                    New premium subscriptions on {format(selectedDate, 'MMM dd, yyyy')}
+                  </p>
+                </CardContent>
+              </Card>
 
-            {/* Date Info Card */}
-            <Card>
-              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm font-medium'>Data Date</CardTitle>
-                <Calendar className='h-4 w-4 text-muted-foreground' />
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>{format(selectedDate, 'MMM dd')}</div>
-                <p className='text-xs text-muted-foreground'>
-                  {format(selectedDate, 'yyyy')} • {format(selectedDate, 'EEEE')}
-                </p>
-                <div className='mt-2'>
-                  <Badge variant='outline' className='text-xs'>
-                    {analytics.data.date}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+              {/* Daily New Users */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>Daily New Users</CardTitle>
+                  <UserCheck className='h-4 w-4 text-blue-500' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold text-blue-600 dark:text-blue-400'>
+                    {formatNumber(analytics.data.dailyNewUsers)}
+                  </div>
+                  <p className='text-xs text-muted-foreground'>
+                    New user registrations on {format(selectedDate, 'MMM dd, yyyy')}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Date Info Card */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>Data Date</CardTitle>
+                  <Calendar className='h-4 w-4 text-muted-foreground' />
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>{format(selectedDate, 'MMM dd')}</div>
+                  <p className='text-xs text-muted-foreground'>
+                    {format(selectedDate, 'yyyy')} • {format(selectedDate, 'EEEE')}
+                  </p>
+                  <div className='mt-2'>
+                    <Badge variant='outline' className='text-xs'>
+                      {analytics.data.date}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i}>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <div className='h-4 w-24 bg-muted animate-pulse rounded' />
-                  <div className='h-4 w-4 bg-muted animate-pulse rounded' />
-                </CardHeader>
-                <CardContent>
-                  <div className='h-8 w-16 bg-muted animate-pulse rounded mb-2' />
-                  <div className='h-3 w-32 bg-muted animate-pulse rounded' />
-                </CardContent>
-              </Card>
-            ))}
+          <div className='space-y-6'>
+            {/* Main Metrics Loading */}
+            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i}>
+                  <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                    <div className='h-4 w-24 bg-muted animate-pulse rounded' />
+                    <div className='h-4 w-4 bg-muted animate-pulse rounded' />
+                  </CardHeader>
+                  <CardContent>
+                    <div className='h-8 w-16 bg-muted animate-pulse rounded mb-2' />
+                    <div className='h-3 w-32 bg-muted animate-pulse rounded' />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            {/* New Users Loading */}
+            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i}>
+                  <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                    <div className='h-4 w-24 bg-muted animate-pulse rounded' />
+                    <div className='h-4 w-4 bg-muted animate-pulse rounded' />
+                  </CardHeader>
+                  <CardContent>
+                    <div className='h-8 w-16 bg-muted animate-pulse rounded mb-2' />
+                    <div className='h-3 w-32 bg-muted animate-pulse rounded' />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         )}
 
