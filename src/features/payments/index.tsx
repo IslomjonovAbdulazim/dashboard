@@ -46,7 +46,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { analyticsApi, type PremiumUser } from '@/lib/analytics-api'
+import { analyticsApi, type PremiumUser, type Order } from '@/lib/analytics-api'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
@@ -69,6 +69,8 @@ export function Payments() {
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [premiumUsersPage, setPremiumUsersPage] = useState(0)
   const [premiumUsersLimit] = useState(10)
+  const [ordersPage, setOrdersPage] = useState(0)
+  const [ordersLimit] = useState(10)
 
   const formattedStartDate = format(dateRange.from, 'yyyy-MM-dd')
   const formattedEndDate = format(dateRange.to, 'yyyy-MM-dd')
@@ -94,12 +96,13 @@ export function Payments() {
     isLoading: isOrdersLoading,
     refetch: refetchOrders,
   } = useQuery({
-    queryKey: ['orders', orderStatus, formattedStartDate, formattedEndDate],
+    queryKey: ['orders', orderStatus, formattedStartDate, formattedEndDate, ordersPage, ordersLimit],
     queryFn: () => analyticsApi.getOrders({
       status: orderStatus === 'all' ? undefined : orderStatus,
       startDate: formattedStartDate,
       endDate: formattedEndDate,
-      limit: 50,
+      limit: ordersLimit,
+      skip: ordersPage * ordersLimit,
     }),
   })
 
@@ -170,6 +173,7 @@ export function Payments() {
   const handleDateRangeChange = (range: DateRange) => {
     setDateRange(range)
     setPremiumUsersPage(0) // Reset to first page when date range changes
+    setOrdersPage(0) // Reset orders pagination too
   }
 
   const handlePreviousPage = () => {
@@ -182,17 +186,42 @@ export function Payments() {
     }
   }
 
+  const handleOrdersPreviousPage = () => {
+    setOrdersPage(prev => Math.max(0, prev - 1))
+  }
+
+  const handleOrdersNextPage = () => {
+    if (ordersData?.data.pagination?.hasMore) {
+      setOrdersPage(prev => prev + 1)
+    }
+  }
+
   const getUserDisplayName = (user: PremiumUser) => {
+    if (user.fullName) return user.fullName
     if (user.firstName) return user.firstName
     if (user.email) return user.email.split('@')[0]
     if (user.phone) return user.phone
     return `User ${user.userId.slice(-6)}`
   }
 
+  const getOrderDisplayName = (order: Order) => {
+    if (order.fullName) return order.fullName
+    if (order.firstName) return order.firstName
+    if (order.displayName) return order.displayName
+    if (order.email) return order.email.split('@')[0]
+    if (order.phone) return order.phone
+    return `Order ${order.orderId.slice(-6)}`
+  }
+
   const getUserContact = (user: PremiumUser) => {
     if (user.email) return { type: 'email', value: user.email }
     if (user.phone) return { type: 'phone', value: user.phone }
     return null
+  }
+
+  const handleOrderStatusChange = (status: string) => {
+    setOrderStatus(status)
+    setOrdersPage(0) // Reset pagination when status changes
   }
 
   return (
@@ -443,11 +472,18 @@ export function Payments() {
         {/* Orders Section */}
         <Card>
           <CardHeader className='flex flex-row items-center justify-between'>
-            <CardTitle className='flex items-center gap-2'>
-              <CreditCard className='h-5 w-5' />
-              Payment Orders
-            </CardTitle>
-            <Select value={orderStatus} onValueChange={setOrderStatus}>
+            <div className='flex items-center gap-4'>
+              <CardTitle className='flex items-center gap-2'>
+                <CreditCard className='h-5 w-5' />
+                Payment Orders
+              </CardTitle>
+              {ordersData?.data.total && (
+                <div className='text-sm text-muted-foreground'>
+                  {ordersData.data.total} total orders
+                </div>
+              )}
+            </div>
+            <Select value={orderStatus} onValueChange={handleOrderStatusChange}>
               <SelectTrigger className='w-[150px]'>
                 <SelectValue placeholder='Filter by status' />
               </SelectTrigger>
@@ -479,20 +515,35 @@ export function Payments() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Order ID</TableHead>
-                      <TableHead>Email</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Contact</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Provider</TableHead>
                       <TableHead>Subscription</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead>Days Since</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {ordersData?.data.orders.map((order) => (
-                      <TableRow key={order._id}>
+                      <TableRow key={order.orderId}>
                         <TableCell className='font-mono text-xs'>
                           {order.orderId.slice(-8)}
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium'>
+                              {getOrderDisplayName(order)[0].toUpperCase()}
+                            </div>
+                            <div>
+                              <p className='font-medium text-sm'>{getOrderDisplayName(order)}</p>
+                              {order.promoCode && (
+                                <Badge variant='secondary' className='text-xs mt-1'>
+                                  {order.promoCode}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
                         </TableCell>
                         <TableCell>
                           {order.email ? (
@@ -500,8 +551,13 @@ export function Payments() {
                               <Mail className='h-3 w-3' />
                               <span className='text-sm'>{order.email}</span>
                             </div>
+                          ) : order.phone ? (
+                            <div className='flex items-center gap-1'>
+                              <Phone className='h-3 w-3' />
+                              <span className='text-sm'>{order.phone}</span>
+                            </div>
                           ) : (
-                            <span className='text-muted-foreground text-sm'>No email</span>
+                            <span className='text-muted-foreground text-sm'>No contact</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -510,6 +566,11 @@ export function Payments() {
                             {order.discountAmount > 0 && (
                               <div className='text-xs text-green-600'>
                                 -{formatCurrency(order.discountAmount)} discount
+                              </div>
+                            )}
+                            {order.paidAmount !== order.amount && (
+                              <div className='text-xs text-blue-600'>
+                                Paid: {formatCurrency(order.paidAmount)}
                               </div>
                             )}
                           </div>
@@ -539,9 +600,6 @@ export function Payments() {
                         <TableCell className='text-sm'>
                           {format(new Date(order.date), 'MMM dd, HH:mm')}
                         </TableCell>
-                        <TableCell className='text-sm text-muted-foreground'>
-                          {Math.floor(order.daysSinceOrder)} days
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -553,6 +611,38 @@ export function Payments() {
                     <p>No orders found for the selected criteria</p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Orders Pagination Controls */}
+            {ordersData?.data.pagination && ordersData.data.total > ordersLimit && (
+              <div className='flex items-center justify-between pt-4 border-t'>
+                <div className='text-sm text-muted-foreground'>
+                  Showing {ordersPage * ordersLimit + 1}-{Math.min((ordersPage + 1) * ordersLimit, ordersData.data.total)} of {ordersData.data.total} orders
+                </div>
+                <div className='flex items-center gap-2'>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={handleOrdersPreviousPage}
+                    disabled={ordersPage === 0 || isOrdersLoading}
+                  >
+                    <ChevronLeft className='h-4 w-4 mr-1' />
+                    Previous
+                  </Button>
+                  <span className='text-sm text-muted-foreground'>
+                    Page {ordersPage + 1} of {Math.ceil(ordersData.data.total / ordersLimit)}
+                  </span>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={handleOrdersNextPage}
+                    disabled={!ordersData.data.pagination.hasMore || isOrdersLoading}
+                  >
+                    Next
+                    <ChevronRight className='h-4 w-4 ml-1' />
+                  </Button>
+                </div>
               </div>
             )}
 

@@ -15,11 +15,13 @@ export interface AnalyticsOverviewResponse {
 }
 
 export interface PremiumUser {
-  _id: string
+  _id?: string
   userId: string
-  firstName?: string
-  email?: string
-  phone?: string
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  email?: string | null
+  phone?: string | null
   subscriptionStartDate: string
 }
 
@@ -40,17 +42,34 @@ export interface NewPremiumUsersResponse {
   }
 }
 
+export interface SingleDatePremiumUsersResponse {
+  message?: string
+  data: {
+    date: string
+    count: number
+    users: PremiumUser[]
+  }
+}
+
 export interface Order {
-  _id: string
-  discountAmount: number
-  status: 'PENDING' | 'PAID' | 'CANCELED' | 'TIMEOUT' | 'EXPIRED'
+  _id?: string
   orderId: string
-  email?: string
+  firstName?: string | null
+  lastName?: string | null
+  fullName?: string | null
+  email?: string | null
+  phone?: string | null
   date: string
   amount: number
   paidAmount: number
-  provider: 'PAYME' | string
+  status: 'PENDING' | 'PAID' | 'CANCELED' | 'TIMEOUT' | 'EXPIRED'
+  provider: 'PAYME' | 'CLICK' | string
+  promoCode?: string | null
+  discountAmount: number
+  discountType?: 'PERCENTAGE' | 'FIXED' | string
   subscription: string
+  performedAt?: string
+  canceledAt?: string | null
   displayName: string
   hasPromo: boolean
   daysSinceOrder: number
@@ -81,6 +100,7 @@ export interface OrdersResponse {
         startDate: string
         endDate: string
       }
+      search: string | null
     }
   }
 }
@@ -121,6 +141,14 @@ export const analyticsApi = {
 
     const response = await api.get<NewPremiumUsersResponse>(
       `/v1/analytics/new-premium-users-range?${searchParams.toString()}`
+    )
+    return response.data
+  },
+
+  // Get new premium users for a specific date
+  getNewPremiumUsersByDate: async (date: string): Promise<SingleDatePremiumUsersResponse> => {
+    const response = await api.get<SingleDatePremiumUsersResponse>(
+      `/v1/analytics/new-premium-users?date=${date}`
     )
     return response.data
   },
