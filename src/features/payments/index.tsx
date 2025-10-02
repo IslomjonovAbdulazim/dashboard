@@ -4,7 +4,6 @@ import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { 
   Calendar, 
   CreditCard, 
-  Users, 
   TrendingUp, 
   Clock,
   CheckCircle,
@@ -46,7 +45,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { analyticsApi, type PremiumUser, type Order } from '@/lib/analytics-api'
+import { analyticsApi, type Order } from '@/lib/analytics-api'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
@@ -67,28 +66,12 @@ export function Payments() {
   })
   const [orderStatus, setOrderStatus] = useState<string>('all')
   const [datePickerOpen, setDatePickerOpen] = useState(false)
-  const [premiumUsersPage, setPremiumUsersPage] = useState(0)
-  const [premiumUsersLimit] = useState(10)
   const [ordersPage, setOrdersPage] = useState(0)
   const [ordersLimit] = useState(10)
 
   const formattedStartDate = format(dateRange.from, 'yyyy-MM-dd')
   const formattedEndDate = format(dateRange.to, 'yyyy-MM-dd')
 
-  // Fetch new premium users data
-  const {
-    data: premiumUsersData,
-    isLoading: isPremiumUsersLoading,
-    refetch: refetchPremiumUsers,
-  } = useQuery({
-    queryKey: ['new-premium-users', formattedStartDate, formattedEndDate, premiumUsersPage, premiumUsersLimit],
-    queryFn: () => analyticsApi.getNewPremiumUsers({
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      limit: premiumUsersLimit,
-      skip: premiumUsersPage * premiumUsersLimit,
-    }),
-  })
 
   // Fetch orders data
   const {
@@ -150,41 +133,16 @@ export function Payments() {
     }
   }
 
-  // Calculate total premium users from the data
-  const totalNewPremiumUsers = premiumUsersData?.data.results?.reduce(
-    (sum, day) => sum + day.count, 0
-  ) || 0
-
-  // Calculate daily average
-  const daysInRange = premiumUsersData?.data.results?.length || 1
-  const dailyAverage = totalNewPremiumUsers / daysInRange
-
-  // Find peak day
-  const peakDay = premiumUsersData?.data.results?.reduce(
-    (max, day) => day.count > max.count ? day : max,
-    { date: '', count: 0 }
-  ) || { date: '', count: 0 }
 
   const handleRefresh = () => {
-    refetchPremiumUsers()
     refetchOrders()
   }
 
   const handleDateRangeChange = (range: DateRange) => {
     setDateRange(range)
-    setPremiumUsersPage(0) // Reset to first page when date range changes
-    setOrdersPage(0) // Reset orders pagination too
+    setOrdersPage(0) // Reset orders pagination
   }
 
-  const handlePreviousPage = () => {
-    setPremiumUsersPage(prev => Math.max(0, prev - 1))
-  }
-
-  const handleNextPage = () => {
-    if (premiumUsersData?.data.pagination?.hasMore) {
-      setPremiumUsersPage(prev => prev + 1)
-    }
-  }
 
   const handleOrdersPreviousPage = () => {
     setOrdersPage(prev => Math.max(0, prev - 1))
@@ -196,14 +154,6 @@ export function Payments() {
     }
   }
 
-  const getUserDisplayName = (user: PremiumUser) => {
-    if (user.fullName) return user.fullName
-    if (user.firstName) return user.firstName
-    if (user.email) return user.email.split('@')[0]
-    if (user.phone) return user.phone
-    return `User ${user.userId.slice(-6)}`
-  }
-
   const getOrderDisplayName = (order: Order) => {
     if (order.fullName) return order.fullName
     if (order.firstName) return order.firstName
@@ -211,12 +161,6 @@ export function Payments() {
     if (order.email) return order.email.split('@')[0]
     if (order.phone) return order.phone
     return `Order ${order.orderId.slice(-6)}`
-  }
-
-  const getUserContact = (user: PremiumUser) => {
-    if (user.email) return { type: 'email', value: user.email }
-    if (user.phone) return { type: 'phone', value: user.phone }
-    return null
   }
 
   const handleOrderStatusChange = (status: string) => {
@@ -287,60 +231,15 @@ export function Payments() {
             <Button
               onClick={handleRefresh}
               variant='outline'
-              disabled={isPremiumUsersLoading || isOrdersLoading}
+              disabled={isOrdersLoading}
             >
-              {isPremiumUsersLoading || isOrdersLoading ? 'Refreshing...' : 'Refresh'}
+              {isOrdersLoading ? 'Refreshing...' : 'Refresh'}
             </Button>
           </div>
         </div>
 
         {/* Summary Cards */}
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6'>
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>New Premium Users</CardTitle>
-              <Users className='h-4 w-4 text-green-500' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-green-600 dark:text-green-400'>
-                {formatNumber(totalNewPremiumUsers)}
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                In selected date range
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Daily Average</CardTitle>
-              <TrendingUp className='h-4 w-4 text-blue-500' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-blue-600 dark:text-blue-400'>
-                {dailyAverage.toFixed(1)}
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                New users per day
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Peak Day</CardTitle>
-              <Calendar className='h-4 w-4 text-purple-500' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-purple-600 dark:text-purple-400'>
-                {peakDay?.count || 0}
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                {peakDay?.date ? format(new Date(peakDay.date), 'MMM dd') : 'No data'}
-              </p>
-            </CardContent>
-          </Card>
-
+        <div className='grid gap-4 md:grid-cols-1 lg:grid-cols-1 mb-6'>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Total Orders</CardTitle>
@@ -357,117 +256,6 @@ export function Payments() {
           </Card>
         </div>
 
-        {/* Premium Users Timeline */}
-        <Card className='mb-6'>
-          <CardHeader className='flex flex-row items-center justify-between'>
-            <CardTitle className='flex items-center gap-2'>
-              <Users className='h-5 w-5' />
-              New Premium Users Timeline
-            </CardTitle>
-            {premiumUsersData?.data.pagination && (
-              <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                <span>
-                  Showing {premiumUsersPage * premiumUsersLimit + 1}-{Math.min((premiumUsersPage + 1) * premiumUsersLimit, premiumUsersData.data.pagination.total)} of {premiumUsersData.data.pagination.total} days
-                </span>
-              </div>
-            )}
-          </CardHeader>
-          <CardContent>
-            {isPremiumUsersLoading ? (
-              <div className='space-y-3'>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className='flex items-center space-x-4'>
-                    <div className='h-4 w-20 bg-muted animate-pulse rounded' />
-                    <div className='h-4 w-8 bg-muted animate-pulse rounded' />
-                    <div className='h-4 w-32 bg-muted animate-pulse rounded' />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className='space-y-3 max-h-96 overflow-y-auto'>
-                {premiumUsersData?.data.results
-                  ?.filter(day => day.count > 0)
-                  ?.map((day) => (
-                    <div key={day.date} className='border-l-2 border-green-500 pl-4 py-2'>
-                      <div className='flex items-center gap-3 mb-2'>
-                        <Badge variant='outline' className='text-xs'>
-                          {format(new Date(day.date), 'MMM dd, yyyy')}
-                        </Badge>
-                        <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'>
-                          {day.count} new user{day.count !== 1 ? 's' : ''}
-                        </Badge>
-                      </div>
-                      {day.users.length > 0 && (
-                        <div className='space-y-2'>
-                          {day.users.map((user) => {
-                            const contact = getUserContact(user)
-                            return (
-                              <div key={user._id} className='flex items-center gap-3 p-2 bg-muted/50 rounded-lg'>
-                                <div className='w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-sm font-medium'>
-                                  {getUserDisplayName(user)[0].toUpperCase()}
-                                </div>
-                                <div className='flex-1'>
-                                  <p className='font-medium text-sm'>{getUserDisplayName(user)}</p>
-                                  {contact && (
-                                    <div className='flex items-center gap-1 text-xs text-muted-foreground'>
-                                      {contact.type === 'email' ? (
-                                        <Mail className='h-3 w-3' />
-                                      ) : (
-                                        <Phone className='h-3 w-3' />
-                                      )}
-                                      {contact.value}
-                                    </div>
-                                  )}
-                                </div>
-                                <Badge variant='outline' className='text-xs'>
-                                  {format(new Date(user.subscriptionStartDate), 'HH:mm')}
-                                </Badge>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                {premiumUsersData?.data.results?.filter(day => day.count > 0)?.length === 0 && (
-                  <div className='text-center py-8 text-muted-foreground'>
-                    <Users className='h-12 w-12 mx-auto mb-2 opacity-50' />
-                    <p>No new premium users in the selected date range</p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* Pagination Controls */}
-            {premiumUsersData?.data.pagination && premiumUsersData.data.pagination.total > premiumUsersLimit && (
-              <div className='flex items-center justify-between pt-4 border-t'>
-                <div className='text-sm text-muted-foreground'>
-                  Page {premiumUsersPage + 1} of {Math.ceil(premiumUsersData.data.pagination.total / premiumUsersLimit)}
-                </div>
-                <div className='flex items-center gap-2'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={handlePreviousPage}
-                    disabled={premiumUsersPage === 0 || isPremiumUsersLoading}
-                  >
-                    <ChevronLeft className='h-4 w-4 mr-1' />
-                    Previous
-                  </Button>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={handleNextPage}
-                    disabled={!premiumUsersData.data.pagination.hasMore || isPremiumUsersLoading}
-                  >
-                    Next
-                    <ChevronRight className='h-4 w-4 ml-1' />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
         {/* Orders Section */}
         <Card>
@@ -537,11 +325,6 @@ export function Payments() {
                             </div>
                             <div>
                               <p className='font-medium text-sm'>{getOrderDisplayName(order)}</p>
-                              {order.promoCode && (
-                                <Badge variant='secondary' className='text-xs mt-1'>
-                                  {order.promoCode}
-                                </Badge>
-                              )}
                             </div>
                           </div>
                         </TableCell>
@@ -588,14 +371,7 @@ export function Payments() {
                           <Badge variant='outline'>{order.provider}</Badge>
                         </TableCell>
                         <TableCell>
-                          <div className='flex items-center gap-2'>
-                            <span className='text-sm'>{order.subscription}</span>
-                            {order.hasPromo && (
-                              <Badge variant='secondary' className='text-xs'>
-                                PROMO
-                              </Badge>
-                            )}
-                          </div>
+                          <span className='text-sm'>{order.subscription}</span>
                         </TableCell>
                         <TableCell className='text-sm'>
                           {format(new Date(order.date), 'MMM dd, HH:mm')}
