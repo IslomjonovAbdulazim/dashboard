@@ -89,9 +89,6 @@ export function Payments() {
     }),
   })
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US').format(num)
-  }
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -238,23 +235,48 @@ export function Payments() {
           </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className='grid gap-4 md:grid-cols-1 lg:grid-cols-1 mb-6'>
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Total Orders</CardTitle>
-              <CreditCard className='h-4 w-4 text-orange-500' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-orange-600 dark:text-orange-400'>
-                {formatNumber(ordersData?.data.total || 0)}
+        {/* Revenue Summary */}
+        {ordersData?.data.summary && (
+          <div className='grid gap-4 md:grid-cols-3 lg:grid-cols-5 mb-6'>
+            <div className='text-center p-4 bg-muted/50 rounded-lg'>
+              <DollarSign className='h-5 w-5 mx-auto mb-2 text-green-500' />
+              <div className='font-medium text-sm'>Total Revenue</div>
+              <div className='text-xl font-bold text-green-600'>
+                {formatCurrency(ordersData.data.summary.totalRevenue)}
               </div>
-              <p className='text-xs text-muted-foreground'>
-                In selected range
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+            <div className='text-center p-4 bg-muted/50 rounded-lg'>
+              <TrendingUp className='h-5 w-5 mx-auto mb-2 text-blue-500' />
+              <div className='font-medium text-sm'>Avg Order</div>
+              <div className='text-xl font-bold text-blue-600'>
+                {formatCurrency(ordersData.data.summary.averageOrderValue)}
+              </div>
+            </div>
+            <div className='text-center p-4 bg-muted/50 rounded-lg'>
+              <CheckCircle className='h-5 w-5 mx-auto mb-2 text-green-500' />
+              <div className='font-medium text-sm'>Paid</div>
+              <div className='text-xl font-bold'>
+                {ordersData.data.summary.statusBreakdown.PAID || 0}
+              </div>
+            </div>
+            <div className='text-center p-4 bg-muted/50 rounded-lg'>
+              <Clock className='h-5 w-5 mx-auto mb-2 text-yellow-500' />
+              <div className='font-medium text-sm'>Pending</div>
+              <div className='text-xl font-bold'>
+                {ordersData.data.summary.statusBreakdown.PENDING || 0}
+              </div>
+            </div>
+            <div className='text-center p-4 bg-muted/50 rounded-lg'>
+              <XCircle className='h-5 w-5 mx-auto mb-2 text-red-500' />
+              <div className='font-medium text-sm'>Failed</div>
+              <div className='text-xl font-bold'>
+                {(ordersData.data.summary.statusBreakdown.CANCELED || 0) + 
+                 (ordersData.data.summary.statusBreakdown.EXPIRED || 0) + 
+                 (ordersData.data.summary.statusBreakdown.TIMEOUT || 0)}
+              </div>
+            </div>
+          </div>
+        )}
 
 
         {/* Orders Section */}
@@ -422,48 +444,6 @@ export function Payments() {
               </div>
             )}
 
-            {/* Order Summary */}
-            {ordersData?.data.summary && (
-              <div className='mt-6 grid gap-4 md:grid-cols-3 lg:grid-cols-5'>
-                <div className='text-center p-3 bg-muted/50 rounded-lg'>
-                  <DollarSign className='h-4 w-4 mx-auto mb-1 text-green-500' />
-                  <div className='font-medium text-sm'>Total Revenue</div>
-                  <div className='text-lg font-bold text-green-600'>
-                    {formatCurrency(ordersData.data.summary.totalRevenue)}
-                  </div>
-                </div>
-                <div className='text-center p-3 bg-muted/50 rounded-lg'>
-                  <TrendingUp className='h-4 w-4 mx-auto mb-1 text-blue-500' />
-                  <div className='font-medium text-sm'>Avg Order</div>
-                  <div className='text-lg font-bold text-blue-600'>
-                    {formatCurrency(ordersData.data.summary.averageOrderValue)}
-                  </div>
-                </div>
-                <div className='text-center p-3 bg-muted/50 rounded-lg'>
-                  <CheckCircle className='h-4 w-4 mx-auto mb-1 text-green-500' />
-                  <div className='font-medium text-sm'>Paid</div>
-                  <div className='text-lg font-bold'>
-                    {ordersData.data.summary.statusBreakdown.PAID || 0}
-                  </div>
-                </div>
-                <div className='text-center p-3 bg-muted/50 rounded-lg'>
-                  <Clock className='h-4 w-4 mx-auto mb-1 text-yellow-500' />
-                  <div className='font-medium text-sm'>Pending</div>
-                  <div className='text-lg font-bold'>
-                    {ordersData.data.summary.statusBreakdown.PENDING || 0}
-                  </div>
-                </div>
-                <div className='text-center p-3 bg-muted/50 rounded-lg'>
-                  <XCircle className='h-4 w-4 mx-auto mb-1 text-red-500' />
-                  <div className='font-medium text-sm'>Failed</div>
-                  <div className='text-lg font-bold'>
-                    {(ordersData.data.summary.statusBreakdown.CANCELED || 0) + 
-                     (ordersData.data.summary.statusBreakdown.EXPIRED || 0) + 
-                     (ordersData.data.summary.statusBreakdown.TIMEOUT || 0)}
-                  </div>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </Main>
