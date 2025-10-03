@@ -17,6 +17,7 @@ import { Route as AuthenticatedUserManagementRouteImport } from './routes/_authe
 import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
 import { Route as AuthenticatedLearningCentersRouteImport } from './routes/_authenticated/learning-centers'
+import { Route as AuthenticatedCouponsRouteImport } from './routes/_authenticated/coupons'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedContentWordsRouteImport } from './routes/_authenticated/content/words'
 import { Route as AuthenticatedContentLessonsRouteImport } from './routes/_authenticated/content/lessons'
@@ -63,6 +64,11 @@ const AuthenticatedLearningCentersRoute =
     path: '/learning-centers',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCouponsRoute = AuthenticatedCouponsRouteImport.update({
+  id: '/coupons',
+  path: '/coupons',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
@@ -90,6 +96,7 @@ const AuthenticatedContentCoursesRoute =
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/coupons': typeof AuthenticatedCouponsRoute
   '/learning-centers': typeof AuthenticatedLearningCentersRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/payments': typeof AuthenticatedPaymentsRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/coupons': typeof AuthenticatedCouponsRoute
   '/learning-centers': typeof AuthenticatedLearningCentersRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/payments': typeof AuthenticatedPaymentsRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/coupons': typeof AuthenticatedCouponsRoute
   '/_authenticated/learning-centers': typeof AuthenticatedLearningCentersRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
   '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/coupons'
     | '/learning-centers'
     | '/overview'
     | '/payments'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/coupons'
     | '/learning-centers'
     | '/overview'
     | '/payments'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/login'
+    | '/_authenticated/coupons'
     | '/_authenticated/learning-centers'
     | '/_authenticated/overview'
     | '/_authenticated/payments'
@@ -235,6 +247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLearningCentersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/coupons': {
+      id: '/_authenticated/coupons'
+      path: '/coupons'
+      fullPath: '/coupons'
+      preLoaderRoute: typeof AuthenticatedCouponsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
@@ -267,6 +286,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCouponsRoute: typeof AuthenticatedCouponsRoute
   AuthenticatedLearningCentersRoute: typeof AuthenticatedLearningCentersRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
   AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
@@ -280,6 +300,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCouponsRoute: AuthenticatedCouponsRoute,
   AuthenticatedLearningCentersRoute: AuthenticatedLearningCentersRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
   AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,

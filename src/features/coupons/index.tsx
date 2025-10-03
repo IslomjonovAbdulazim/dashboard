@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Tag, TrendingUp, Users, Percent, DollarSign } from 'lucide-react'
+import { Tag, TrendingUp, Users, Percent } from 'lucide-react'
 
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'

@@ -30,7 +30,7 @@ import { DataTable } from '@/components/data-table'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
 import { couponsApi, type Coupon } from '@/lib/coupons-api'
-import { useDialogState } from '@/hooks/use-dialog-state'
+import useDialogState from '@/hooks/use-dialog-state'
 
 interface CouponsTableProps {
   onEdit: (coupon: Coupon) => void
@@ -43,7 +43,7 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
 
-  const deleteDialog = useDialogState()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useDialogState<boolean>(false)
   const [couponToDelete, setCouponToDelete] = useState<Coupon | null>(null)
 
   // Fetch coupons
@@ -62,7 +62,7 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coupons'] })
       toast.success('Coupon deleted successfully!')
-      deleteDialog.setIsOpen(false)
+      setDeleteDialogOpen(false)
       setCouponToDelete(null)
     },
     onError: (error: any) => {
@@ -239,7 +239,7 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
                 <DropdownMenuItem
                   onClick={() => {
                     setCouponToDelete(coupon)
-                    deleteDialog.setIsOpen(true)
+                    setDeleteDialogOpen(true)
                   }}
                   className='text-red-600'
                 >
@@ -252,7 +252,7 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
         },
       },
     ],
-    [onEdit, deleteDialog]
+    [onEdit, setDeleteDialogOpen]
   )
 
   const table = useReactTable({
@@ -312,14 +312,15 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
       </Card>
 
       <ConfirmDialog
-        isOpen={deleteDialog.isOpen}
-        onClose={() => deleteDialog.setIsOpen(false)}
-        onConfirm={handleDeleteConfirm}
+        open={!!deleteDialogOpen}
+        onOpenChange={(open) => setDeleteDialogOpen(open ? true : false)}
+        handleConfirm={handleDeleteConfirm}
         title='Delete Coupon'
-        description={`Are you sure you want to delete the coupon "${couponToDelete?.code}"? This action cannot be undone.`}
+        desc={`Are you sure you want to delete the coupon "${couponToDelete?.code}"? This action cannot be undone.`}
         confirmText='Delete'
-        cancelText='Cancel'
+        cancelBtnText='Cancel'
         isLoading={deleteMutation.isPending}
+        destructive
       />
     </>
   )

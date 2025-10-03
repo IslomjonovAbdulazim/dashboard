@@ -24,6 +24,7 @@ export interface Translations {
     general: string;
     overview: string;
     payments: string;
+    coupons: string;
     users: string;
     learningCenters: string;
     contentManagement: string;
@@ -307,6 +308,7 @@ export const uzbekTranslations: Translations = {
     general: "Umumiy",
     overview: "Umumiy Ko'rinish",
     payments: "To'lovlar",
+    coupons: "Kuponlar",
     users: "Foydalanuvchilar",
     learningCenters: "Ta'lim Markazlari",
     contentManagement: "Kontent Boshqaruvi",
@@ -583,6 +585,7 @@ export const englishTranslations: Translations = {
     general: "General",
     overview: "Overview",
     payments: "Payments",
+    coupons: "Coupons",
     users: "Users",
     learningCenters: "Learning Centers",
     contentManagement: "Content Management",

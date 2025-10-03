@@ -42,7 +42,7 @@ import {
 import { couponsApi, type CreateCouponRequest } from '@/lib/coupons-api'
 import { couponSchema, type CouponFormData } from '../data/schema'
 import { cn } from '@/lib/utils'
-import { useDialogState } from '@/hooks/use-dialog-state'
+import { useState } from 'react'
 
 interface CreateCouponDialogProps {
   children?: React.ReactNode
@@ -50,7 +50,7 @@ interface CreateCouponDialogProps {
 
 export function CreateCouponDialog({ children }: CreateCouponDialogProps) {
   const queryClient = useQueryClient()
-  const dialog = useDialogState()
+  const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<CouponFormData>({
     resolver: zodResolver(couponSchema),
@@ -72,7 +72,7 @@ export function CreateCouponDialog({ children }: CreateCouponDialogProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coupons'] })
       toast.success('Coupon created successfully!')
-      dialog.setIsOpen(false)
+      setIsOpen(false)
       form.reset()
     },
     onError: (error: any) => {
@@ -97,7 +97,7 @@ export function CreateCouponDialog({ children }: CreateCouponDialogProps) {
   }
 
   return (
-    <Dialog open={dialog.isOpen} onOpenChange={dialog.setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {children || (
           <Button>
@@ -309,7 +309,7 @@ export function CreateCouponDialog({ children }: CreateCouponDialogProps) {
               <Button
                 type='button'
                 variant='outline'
-                onClick={() => dialog.setIsOpen(false)}
+                onClick={() => setIsOpen(false)}
               >
                 Cancel
               </Button>
