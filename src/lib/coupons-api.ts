@@ -82,31 +82,31 @@ export interface DeleteResponse {
 export const couponsApi = {
   // List all coupons
   list: async (): Promise<Coupon[]> => {
-    const response = await api.get<CouponsListResponse>('/coupons')
+    const response = await api.get<CouponsListResponse>('/v1/coupons')
     return response.data.data
   },
 
   // Get specific coupon
   get: async (id: string): Promise<Coupon> => {
-    const response = await api.get<CouponResponse>(`/coupons/${id}`)
+    const response = await api.get<CouponResponse>(`/v1/coupons/${id}`)
     return response.data.data
   },
 
   // Create new coupon
   create: async (data: CreateCouponRequest): Promise<Coupon> => {
-    const response = await api.post<CouponResponse>('/coupons', data)
+    const response = await api.post<CouponResponse>('/v1/coupons', data)
     return response.data.data
   },
 
   // Update coupon
   update: async (id: string, data: UpdateCouponRequest): Promise<Coupon> => {
-    const response = await api.put<CouponResponse>(`/coupons/${id}`, data)
+    const response = await api.put<CouponResponse>(`/v1/coupons/${id}`, data)
     return response.data.data
   },
 
   // Delete coupon
   delete: async (id: string): Promise<Coupon> => {
-    const response = await api.delete<DeleteResponse>(`/coupons/${id}`)
+    const response = await api.delete<DeleteResponse>(`/v1/coupons/${id}`)
     return response.data.data
   },
 }
