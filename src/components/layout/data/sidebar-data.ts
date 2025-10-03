@@ -8,6 +8,7 @@ import {
   BarChart3,
   CreditCard,
   Tag,
+  MessageSquare,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 import { type Translations } from '@/i18n/translations'
@@ -43,6 +44,11 @@ export const getSidebarData = (t: Translations): SidebarData => ({
           title: t.nav.coupons,
           url: '/coupons',
           icon: Tag,
+        },
+        {
+          title: t.nav.popups,
+          url: '/popups',
+          icon: MessageSquare,
         },
         {
           title: t.nav.users,
@@ -94,6 +100,7 @@ export const sidebarData: SidebarData = getSidebarData({
     overview: 'Overview',
     payments: 'Payments',
     coupons: 'Coupons',
+    popups: 'Popups',
     users: 'Users',
     learningCenters: 'Learning Centers',
     contentManagement: 'Content Management',
