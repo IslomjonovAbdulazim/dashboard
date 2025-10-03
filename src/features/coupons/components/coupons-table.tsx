@@ -121,7 +121,7 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
               <IconComponent className='h-4 w-4 text-green-600' />
               <span className='font-medium'>
                 {discount.value}
-                {discount.type === 'percentage' ? '%' : '$'}
+                {discount.type === 'percentage' ? '%' : 'UZS'}
               </span>
             </div>
           )
@@ -139,7 +139,7 @@ export function CouponsTable({ onEdit }: CouponsTableProps) {
               <IconComponent className='h-4 w-4 text-blue-600' />
               <span className='font-medium'>
                 {commission.value}
-                {commission.type === 'percentage' ? '%' : '$'}
+                {commission.type === 'percentage' ? '%' : 'UZS'}
               </span>
             </div>
           )
