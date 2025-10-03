@@ -44,6 +44,18 @@ export function Header({ className, fixed, children, ...props }: HeaderProps) {
         <SidebarTrigger variant='outline' className='max-md:scale-125' />
         <Separator orientation='vertical' className='h-6' />
         {children}
+        <div className='ms-auto flex items-center space-x-3'>
+          <div className='flex items-center space-x-2'>
+            <img 
+              src='/images/favicon.png' 
+              alt='Zehnly Logo' 
+              className='h-8 w-8'
+            />
+            <span className='text-lg font-semibold text-foreground'>
+              Stats Zehnly
+            </span>
+          </div>
+        </div>
       </div>
     </header>
   )
