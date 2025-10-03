@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedUserManagementRouteImport } from './routes/_authenticated/user-management'
+import { Route as AuthenticatedPopupsRouteImport } from './routes/_authenticated/popups'
 import { Route as AuthenticatedPaymentsRouteImport } from './routes/_authenticated/payments'
 import { Route as AuthenticatedOverviewRouteImport } from './routes/_authenticated/overview'
 import { Route as AuthenticatedLearningCentersRouteImport } from './routes/_authenticated/learning-centers'
@@ -48,6 +49,11 @@ const AuthenticatedUserManagementRoute =
     path: '/user-management',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPopupsRoute = AuthenticatedPopupsRouteImport.update({
+  id: '/popups',
+  path: '/popups',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPaymentsRoute = AuthenticatedPaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/learning-centers': typeof AuthenticatedLearningCentersRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/payments': typeof AuthenticatedPaymentsRoute
+  '/popups': typeof AuthenticatedPopupsRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/learning-centers': typeof AuthenticatedLearningCentersRoute
   '/overview': typeof AuthenticatedOverviewRoute
   '/payments': typeof AuthenticatedPaymentsRoute
+  '/popups': typeof AuthenticatedPopupsRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
   '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/_authenticated/learning-centers': typeof AuthenticatedLearningCentersRoute
   '/_authenticated/overview': typeof AuthenticatedOverviewRoute
   '/_authenticated/payments': typeof AuthenticatedPaymentsRoute
+  '/_authenticated/popups': typeof AuthenticatedPopupsRoute
   '/_authenticated/user-management': typeof AuthenticatedUserManagementRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/learning-centers'
     | '/overview'
     | '/payments'
+    | '/popups'
     | '/user-management'
     | '/users'
     | '/'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/learning-centers'
     | '/overview'
     | '/payments'
+    | '/popups'
     | '/user-management'
     | '/users'
     | '/'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/_authenticated/learning-centers'
     | '/_authenticated/overview'
     | '/_authenticated/payments'
+    | '/_authenticated/popups'
     | '/_authenticated/user-management'
     | '/_authenticated/users'
     | '/_authenticated/'
@@ -224,6 +236,13 @@ declare module '@tanstack/react-router' {
       path: '/user-management'
       fullPath: '/user-management'
       preLoaderRoute: typeof AuthenticatedUserManagementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/popups': {
+      id: '/_authenticated/popups'
+      path: '/popups'
+      fullPath: '/popups'
+      preLoaderRoute: typeof AuthenticatedPopupsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/payments': {
@@ -290,6 +309,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLearningCentersRoute: typeof AuthenticatedLearningCentersRoute
   AuthenticatedOverviewRoute: typeof AuthenticatedOverviewRoute
   AuthenticatedPaymentsRoute: typeof AuthenticatedPaymentsRoute
+  AuthenticatedPopupsRoute: typeof AuthenticatedPopupsRoute
   AuthenticatedUserManagementRoute: typeof AuthenticatedUserManagementRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -304,6 +324,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLearningCentersRoute: AuthenticatedLearningCentersRoute,
   AuthenticatedOverviewRoute: AuthenticatedOverviewRoute,
   AuthenticatedPaymentsRoute: AuthenticatedPaymentsRoute,
+  AuthenticatedPopupsRoute: AuthenticatedPopupsRoute,
   AuthenticatedUserManagementRoute: AuthenticatedUserManagementRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,

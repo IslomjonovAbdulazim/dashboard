@@ -1,0 +1,1 @@
+import{a6 as s,a as r}from"./index-BgyDtNiv.js";const a="https://api.zehnly.ai",t=s.create({baseURL:a,headers:{"Content-Type":"application/json"},timeout:1e4,withCredentials:!0});t.interceptors.request.use(e=>e,e=>Promise.reject(e));t.interceptors.response.use(e=>e,e=>(e.response?.status===401&&r.getState().auth.logout(),Promise.reject(e)));export{t as a};
