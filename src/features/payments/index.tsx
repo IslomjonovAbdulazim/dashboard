@@ -161,7 +161,7 @@ export function Payments() {
     if (order.displayName) return order.displayName
     if (order.email) return order.email.split('@')[0]
     if (order.phone) return order.phone
-    return `Order ${order.orderId.slice(-6)}`
+    return `Order ${order.orderId?.slice(-6) || 'Unknown'}`
   }
 
   const handleOrderStatusChange = (status: string) => {
@@ -356,10 +356,10 @@ export function Payments() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ordersData?.data.orders.map((order) => (
-                      <TableRow key={order.orderId}>
+                    {ordersData?.data.orders?.map((order) => (
+                      <TableRow key={order.orderId || order._id || Math.random()}>
                         <TableCell className='font-mono text-xs'>
-                          {order.orderId.slice(-8)}
+                          {order.orderId?.slice(-8) || 'N/A'}
                         </TableCell>
                         <TableCell>
                           <div className='flex items-center gap-2'>
@@ -424,7 +424,7 @@ export function Payments() {
                   </TableBody>
                 </Table>
 
-                {ordersData?.data.orders.length === 0 && (
+                {ordersData?.data.orders?.length === 0 && (
                   <div className='text-center py-8 text-muted-foreground'>
                     <CreditCard className='h-12 w-12 mx-auto mb-2 opacity-50' />
                     <p>No orders found for the selected criteria</p>

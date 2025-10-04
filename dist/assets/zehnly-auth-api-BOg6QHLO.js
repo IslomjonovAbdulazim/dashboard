@@ -1,0 +1,1 @@
+import{a as t}from"./api-DvMRX4-2.js";const s={login:async r=>(await t.post("/v1/users/login",r)).data,logout:async()=>{try{await t.post("/v1/users/logout")}catch(r){console.warn("Logout request failed:",r)}},checkAuth:async()=>{try{return await t.get("/v1/users/me"),!0}catch{return!1}}};export{s as a};
