@@ -68,7 +68,8 @@ export function Payments() {
   }))
   const [orderStatus, setOrderStatus] = useState<string>('all')
   const [revenueCat, setRevenueCat] = useState<boolean>(false)
-  const [datePickerOpen, setDatePickerOpen] = useState(false)
+  const [startDatePickerOpen, setStartDatePickerOpen] = useState(false)
+  const [endDatePickerOpen, setEndDatePickerOpen] = useState(false)
   const [ordersPage, setOrdersPage] = useState(0)
   const [ordersLimit] = useState(10)
 
@@ -200,36 +201,68 @@ export function Payments() {
           </div>
           
           <div className='flex items-center space-x-3'>
-            <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+            <Popover open={startDatePickerOpen} onOpenChange={setStartDatePickerOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant='outline'
                   className={cn(
-                    'w-[300px] justify-start text-left font-normal',
-                    !dateRange && 'text-muted-foreground'
+                    'w-[140px] justify-start text-left font-normal',
+                    !dateRange.from && 'text-muted-foreground'
                   )}
                 >
                   <Calendar className='mr-2 h-4 w-4' />
-                  {dateRange ? (
-                    `${format(dateRange.from, 'LLL dd, y')} - ${format(dateRange.to, 'LLL dd, y')}`
+                  {dateRange.from ? (
+                    format(dateRange.from, 'MMM dd, y')
                   ) : (
-                    'Pick a date range'
+                    'Start date'
                   )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className='w-auto p-0' align='start'>
                 <CalendarComponent
                   initialFocus
-                  mode='range'
+                  mode='single'
                   defaultMonth={dateRange?.from}
-                  selected={dateRange}
-                  onSelect={(range) => {
-                    if (range?.from && range?.to) {
-                      handleDateRangeChange({ from: range.from, to: range.to })
-                      setDatePickerOpen(false)
+                  selected={dateRange.from}
+                  onSelect={(date) => {
+                    if (date) {
+                      handleDateRangeChange({ from: date, to: dateRange.to })
+                      setStartDatePickerOpen(false)
                     }
                   }}
-                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
+            
+            <Popover open={endDatePickerOpen} onOpenChange={setEndDatePickerOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant='outline'
+                  className={cn(
+                    'w-[140px] justify-start text-left font-normal',
+                    !dateRange.to && 'text-muted-foreground'
+                  )}
+                >
+                  <Calendar className='mr-2 h-4 w-4' />
+                  {dateRange.to ? (
+                    format(dateRange.to, 'MMM dd, y')
+                  ) : (
+                    'End date'
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className='w-auto p-0' align='start'>
+                <CalendarComponent
+                  initialFocus
+                  mode='single'
+                  defaultMonth={dateRange?.to}
+                  selected={dateRange.to}
+                  onSelect={(date) => {
+                    if (date) {
+                      handleDateRangeChange({ from: dateRange.from, to: date })
+                      setEndDatePickerOpen(false)
+                    }
+                  }}
                 />
               </PopoverContent>
             </Popover>
